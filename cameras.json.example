@@ -1,0 +1,47 @@
+[
+  {
+    "channel": 8,
+    "type": "interior",
+    "ip": "192.168.0.108"
+  },
+  {
+    "channel": 11,
+    "type": "interior",
+    "ip": "192.168.0.111"
+  },
+  {
+    "channel": 12,
+    "type": "exterior",
+    "ip": "192.168.0.112"
+  },
+  {
+    "channel": 13,
+    "type": "interior",
+    "ip": "192.168.0.102"
+  },
+  {
+    "channel": 14,
+    "type": "exterior",
+    "ip": "192.168.0.114"
+  },
+  {
+    "channel": 15,
+    "type": "interior",
+    "ip": "192.168.0.103"
+  },
+  {
+    "channel": 17,
+    "type": "interior",
+    "ip": "192.168.0.117"
+  },
+  {
+    "channel": 20,
+    "type": "exterior",
+    "ip": "192.168.1.114"
+  },
+  {
+    "channel": 31,
+    "type": "exterior",
+    "ip": "192.168.3.234"
+  }
+]
