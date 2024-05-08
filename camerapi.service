@@ -1,0 +1,11 @@
+[Unit]
+Description=Camera Pi
+After=multi-user.target
+
+[Service]
+ExecStart=/home/pi/.venv/bin/python /home/pi/security-camera-privacy-mask/security-system-check.py
+User=chris
+
+
+[Install]
+WantedBy=multi-user.target
