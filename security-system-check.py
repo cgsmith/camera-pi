@@ -3,6 +3,8 @@ from datetime import datetime
 import logging
 import RPi.GPIO as GPIO
 import json
+import os
+import platform
 
 from dotenv import load_dotenv
 from postmarker.core import PostmarkClient
@@ -27,7 +29,7 @@ SYSTEM_ALARM_PIN = 20
 LOGFILE_PATH = os.environ['LOGFILE_PATH']
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s', filename=LOGFILE_PATH,
-                    level=os.environ['LOG_DEBUG'])
+                    level=int(os.environ['LOG_DEBUG']))
 
 """
  Functions used within the main loop of the program.
