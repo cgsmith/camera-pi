@@ -4,7 +4,7 @@ USER_HOME=${USER_HOME:-"/home/$USER"}
 # Specify the name of your git project folder
 PROJECT_FOLDER=${PROJECT_FOLDER:-"security-camera-privacy-mask"}
 # Specify the name of your virtual environment
-VENV=${PROJECT_FOLDER:-".venv"}
+VENV=${VENV:-".venv"}
 
 # Change to the user's home directory + project directory
 cd $USER_HOME/$PROJECT_FOLDER || exit
