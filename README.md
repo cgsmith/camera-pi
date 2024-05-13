@@ -3,6 +3,11 @@
 This repository allows for privacy masks to be enabled and disabled. It is intended to be connected to a security 
 system or some system that can provide an "armed" state and an "alarm" state.
 
+## security-system-check.py Flowchart
+
+![img.png](img.png)
+
+
 ## Environment Setup and Pi Setup
 
 With a Raspberry Pi and a base OS perform the following steps to deploy the code. You should be able to use any 
@@ -15,11 +20,12 @@ user's home directory and with a subfolder of `security-camera-privacy-mask`
 3. `python -m venv .venv`
 4. `.venv/bin pip install -r requirements.txt`
 5. `cp .env.example .env`
-6. `cp cameras.json cameras.json`
+6. `cp cameras.json.example cameras.json`
 7. Make appropriate changes to `.env` file
 8. Make appropriate changes to `cameras.json` file
 9. Connect wires to GPIO 16 and GPIO 20 for the Raspberry Pi
-10. Configure `crontab` to do a `git pull` and restart the service (optional)
+10. Configure `crontab` to run `deploy.sh` (optional)
+    11. This will perform a `git pull` and restart the service
 
 ## Service Setup
 
