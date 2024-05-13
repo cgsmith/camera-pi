@@ -19,6 +19,7 @@ user's home directory and with a subfolder of `security-camera-privacy-mask`
 7. Make appropriate changes to `.env` file
 8. Make appropriate changes to `cameras.json` file
 9. Connect wires to GPIO 16 and GPIO 20 for the Raspberry Pi
+10. Configure `crontab` to do a `git pull` and restart the service (optional)
 
 ## Service Setup
 
