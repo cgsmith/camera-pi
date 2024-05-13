@@ -1,6 +1,6 @@
 #!/bin/bash
 # Specify the user's home directory
-USER_HOME=${USER_HOME:-"/home/pi"}
+USER_HOME=${USER_HOME:-"/home/$USER"}
 # Specify the name of your git project folder
 PROJECT_FOLDER=${PROJECT_FOLDER:-"security-camera-privacy-mask"}
 # Specify the name of your virtual environment
