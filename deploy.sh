@@ -10,11 +10,12 @@ VENV=${VENV:-".venv"}
 cd $USER_HOME/$PROJECT_FOLDER || exit
 
 # Step 1: Perform a git pull
+old_head=$(git rev-parse HEAD)
 git pull origin master
-PULL_EXIT_CODE=$?
+new_head=$(git rev-parse HEAD)
 
 # Check if new files were pulled
-if [ $PULL_EXIT_CODE -eq 0 ]; then
+if [[ $old_head != $new_head ]]; then
   echo "Successfully pulled new files."
   # Activate the virtual environment
   source $VENV/bin/activate
