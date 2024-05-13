@@ -25,7 +25,7 @@ user's home directory and with a subfolder of `security-camera-privacy-mask`
 8. Make appropriate changes to `cameras.json` file
 9. Connect wires to GPIO 16 and GPIO 20 for the Raspberry Pi
 10. Configure `crontab` to run `deploy.sh` (optional)
-    11. This will perform a `git pull` and restart the service
+    1. This will perform a `git pull` and restart the service
 
 ## Service Setup
 
