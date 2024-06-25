@@ -74,19 +74,19 @@ def update_privacy_masks():
         log_current_state()
         logger.info('Interior privacy masks off')
         send_email(subject='Interior privacy masks off', body='Privacy change')
-        #privacy_api_calls(camera_ips=interior_cameras)
+        privacy_api_calls(camera_ips=interior_cameras)
     elif last_alarm_state:
         print("All privacy masks off")
         log_current_state()
         logger.info('All privacy masks off')
         send_email(subject='All privacy masks off', body='Privacy change')
-        #privacy_api_calls(camera_ips=all_cameras)
+        privacy_api_calls(camera_ips=all_cameras)
     else:
         print("Privacy masks on")
         log_current_state()
         logger.info('Privacy masks on')
         send_email(subject='Privacy masks on', body='Privacy change')
-        #privacy_api_calls(camera_ips=all_cameras, status=True)
+        privacy_api_calls(camera_ips=all_cameras, status=True)
 
 
 """
