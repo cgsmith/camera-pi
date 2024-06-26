@@ -44,7 +44,7 @@ def privacy_api_calls(camera_ips=None, status=False):
     """
     for ip in camera_ips:
         for i in range(4):
-            encode_blend = str(int(status))  # Convert to 1 or 0 (True/False)
+            encode_blend = str(status).lower()  # Convert to 1 or 0 (True/False)
             url = f'http://{ip}/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].Covers[{i}].EncodeBlend={encode_blend}'
             response = requests.get(url,
                                     auth=HTTPDigestAuth(os.environ['CAMERA_USERNAME'], os.environ['CAMERA_PASSWORD']))
