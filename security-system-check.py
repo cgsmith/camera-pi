@@ -12,7 +12,7 @@ from requests.auth import HTTPDigestAuth
 import requests
 
 # Read camera data from JSON file
-with open('/home/chris/security-camera-privacy-mask/cameras.json', 'r') as file:
+with open('/home/pi/security-camera-privacy-mask/cameras.json', 'r') as file:
     camera_data = json.load(file)
 
 # Get interior cameras
