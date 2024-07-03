@@ -35,7 +35,7 @@ user's home directory and with a subfolder of `security-camera-privacy-mask`
 
 ## Understanding the env vars and cameras.json file
 
-I am using [Postmark App](https://postmarkapp.com/) for sending emails. You can use any service you want. If you use
+I am using `smtplib` and Gmail for sending emails. You can use any service you want. If you use
 a different service you will need to probably configure a different client or SMTP service.
 
 > [!IMPORTANT]  

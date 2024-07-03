@@ -1,15 +1,17 @@
+import json
+import logging
+import os
+import smtplib
+import ssl
 import time
 from datetime import datetime
-import logging
-import RPi.GPIO as GPIO
-import json
-import os
-import platform
+import gettext
+from distutils.util import strtobool
 
-from dotenv import load_dotenv
-from postmarker.core import PostmarkClient
-from requests.auth import HTTPDigestAuth
+import RPi.GPIO as GPIO
 import requests
+from dotenv import load_dotenv
+from requests.auth import HTTPDigestAuth
 
 # Read camera data from JSON file
 with open('/home/pi/security-camera-privacy-mask/cameras.json', 'r') as file:
@@ -22,6 +24,10 @@ all_cameras = [camera['ip'] for camera in camera_data]
 
 # load environment
 load_dotenv()
+
+el = gettext.translation('base', localedir='locales', languages=[os.environ['LANGUAGE']])
+el.install()
+_ = el.gettext
 
 # constants
 SYSTEM_ARMED_PIN = 16
@@ -54,18 +60,16 @@ def privacy_api_calls(camera_ips=None, status=False):
 
 
 def send_email(subject, body):
-    postmark = PostmarkClient(server_token=os.environ['POSTMARK_API'])
-    postmark.emails.send(
-        From=os.environ['FROM_ADDRESS'],
-        To=os.environ['TO_ADDRESS'],
-        Subject=f'[{platform.node()}] {subject}',
-        TextBody=body,
-    )
+    if strtobool(os.getenv('EMAIL_ENABLE', 'False')):
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(os.environ['EMAIL_SERVER'], int(os.environ['EMAIL_PORT']), context=context) as server:
+            server.login(os.environ['EMAIL_USER'], os.environ['EMAIL_PASSWORD'])
+            server.sendmail(os.environ['FROM_ADDRESS'], os.environ['TO_ADDRESS'], f'Subject: {subject}\n\n{body}')
 
 
 def log_current_state():
-    logger.info('System Armed: ' + str(last_armed_state))
-    logger.info('System Alarm: ' + str(last_alarm_state))
+    logger.info(_('System Armed: ') + str(last_armed_state))
+    logger.info(_('System Alarm: ') + str(last_alarm_state))
 
 
 def update_privacy_masks():
@@ -73,26 +77,26 @@ def update_privacy_masks():
         print("Interior privacy masks off")
         log_current_state()
         logger.info('Interior privacy masks off')
-        send_email(subject='Interior privacy masks off', body='Privacy change')
+        send_email(subject=_('Interior privacy masks off'), body=_('Privacy change'))
         privacy_api_calls(camera_ips=interior_cameras)
     elif last_alarm_state:
         print("All privacy masks off")
         log_current_state()
         logger.info('All privacy masks off')
-        send_email(subject='All privacy masks off', body='Privacy change')
+        send_email(subject=_('All privacy masks off'), body=_('Privacy change'))
         privacy_api_calls(camera_ips=all_cameras)
     else:
         print("Privacy masks on")
         log_current_state()
         logger.info('Privacy masks on')
-        send_email(subject='Privacy masks on', body='Privacy change')
+        send_email(subject=_('Privacy masks on'), body=_('Privacy change'))
         privacy_api_calls(camera_ips=all_cameras, status=True)
 
 
 """
     Main Program
 """
-send_email('Controller booted', datetime.now().strftime('%c') + ': Powered on')
+send_email(_('Controller booted'), datetime.now().strftime('%c') + _(': Powered on'))
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SYSTEM_ARMED_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)

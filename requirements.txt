@@ -1,7 +1,6 @@
 certifi==2024.2.2
 charset-normalizer==3.3.2
 idna==3.7
-postmarker==1.0
 python-dotenv==1.0.1
 requests==2.31.0
 RPi.GPIO==0.7.1
