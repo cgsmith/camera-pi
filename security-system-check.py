@@ -25,7 +25,7 @@ all_cameras = [camera['ip'] for camera in camera_data]
 # load environment
 load_dotenv()
 
-el = gettext.translation('base', localedir=os.getcwd() + '/locales', languages=[os.environ['LANGUAGE']])
+el = gettext.translation('base', localedir='/home/pi/security-camera-privacy-mask/locales', languages=[os.environ['LANGUAGE']])
 el.install()
 _ = el.gettext
 
