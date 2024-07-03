@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-07-03 10:23+0200\n"
-"PO-Revision-Date: 2024-07-03 10:27+0200\n"
+"PO-Revision-Date: 2024-07-03 11:10+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -29,7 +29,7 @@ msgstr "Innere Sichtschutzmasken aus"
 #: security-system-check.py:77 security-system-check.py:83
 #: security-system-check.py:89
 msgid "Privacy change"
-msgstr "Schutzmaske ändern"
+msgstr "Schutzmaske aendern"
 
 #: security-system-check.py:83
 msgid "All privacy masks off"
