@@ -1,4 +1,6 @@
 .env
 cameras.json
 venv
+.venv
 .idea
+*.log
