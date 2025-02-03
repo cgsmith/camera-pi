@@ -6,15 +6,69 @@ import ssl
 import time
 from datetime import datetime
 import gettext
-from distutils.util import strtobool
-
-import RPi.GPIO as GPIO
 import requests
 from dotenv import load_dotenv
 from requests.auth import HTTPDigestAuth
 
+# Try importing RPi.GPIO, but mock it if unavailable
+try:
+    import RPi.GPIO as GPIO
+except (ImportError, RuntimeError):
+    # Path to the file simulating GPIO pin states
+    PIN_STATES_FILE = "simulated_pins.json"
+
+    class MockGPIO:
+        BCM = "BCM"
+        IN = "IN"
+        PUD_UP = "PUD_UP"
+
+        def setmode(self, mode):
+            print(f"GPIO setmode({mode}) simulated")
+
+        def setup(self, pin, mode, pull_up_down=None):
+            print(f"GPIO setup(pin={pin}, mode={mode}, pull_up_down={pull_up_down}) simulated")
+
+        def input(self, pin):
+            # Read the current state of the pin from the JSON file
+            try:
+                with open(PIN_STATES_FILE, "r") as f:
+                    pin_states = json.load(f)
+                # Get the state of the requested pin
+                state = pin_states.get(str(pin), False)
+                print(f"MockGPIO: input(pin={pin}) called - returning {state}")
+                return state
+            except FileNotFoundError:
+                print(f"MockGPIO: {PIN_STATES_FILE} not found. Simulating all pins as False.")
+                return False
+            except json.JSONDecodeError:
+                print(f"MockGPIO: Failed to decode {PIN_STATES_FILE}. Simulating all pins as False.")
+                return False
+
+        def cleanup(self):
+            print("GPIO cleanup simulated")
+
+
+    GPIO = MockGPIO()
+
+# Custom implementation to replace `distutils.util.strtobool`
+def to_bool(value):
+    value = value.lower()
+    if value in {'1', 'true', 'yes', 'y'}:
+        return True
+    if value in {'0', 'false', 'no', 'n'}:
+        return False
+    raise ValueError(f"Invalid boolean value: {value}")
+
+
+# load environment
+load_dotenv()
+USER_HOME = os.getenv('USER_HOME')
+
+# Dynamically construct the file path
+cameras_file_path = os.path.join(USER_HOME, 'cameras.json')
+
 # Read camera data from JSON file
-with open('/home/pi/security-camera-privacy-mask/cameras.json', 'r') as file:
+with open(cameras_file_path, 'r') as file:
     camera_data = json.load(file)
 
 # Get interior cameras
@@ -22,10 +76,8 @@ interior_cameras = [camera['ip'] for camera in camera_data if camera['type'] == 
 exterior_cameras = [camera['ip'] for camera in camera_data if camera['type'] == 'exterior']
 all_cameras = [camera['ip'] for camera in camera_data]
 
-# load environment
-load_dotenv()
 
-el = gettext.translation('base', localedir='/home/pi/security-camera-privacy-mask/locales', languages=[os.environ['LANGUAGE']])
+el = gettext.translation('base', localedir=os.path.join(USER_HOME,'locales'), languages=[os.environ['LANGUAGE']])
 el.install()
 _ = el.gettext
 
@@ -60,7 +112,7 @@ def privacy_api_calls(camera_ips=None, status=False):
 
 
 def send_email(subject, body):
-    if strtobool(os.getenv('EMAIL_ENABLE', 'False')):
+    if to_bool(os.getenv('EMAIL_ENABLE', 'False')):
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL(os.environ['EMAIL_SERVER'], int(os.environ['EMAIL_PORT']), context=context) as server:
             server.login(os.environ['EMAIL_USER'], os.environ['EMAIL_PASSWORD'])

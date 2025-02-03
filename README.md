@@ -3,6 +3,9 @@
 This repository allows for privacy masks to be enabled and disabled. It is intended to be connected to a security 
 system or some system that can provide an "armed" state and an "alarm" state.
 
+See the [changelog](CHANGELOG.md) if you want to see the differences between versions. Production currently just follows
+`master`. It should be switched to tagging when stable.
+
 ## security-system-check.py Flowchart
 
 ![img.png](img.png)
@@ -53,6 +56,7 @@ field can either be `exterior` or `interior`. Channel doesn't do anything but ca
 
 ## Testing
 
-For testing, at the moment, I just comment out the GPIO lines and run my tests by changing the booleans to test the 
-cameras. The most common problem I encountered when testing was if the cameras are on a different subnet and the
-lengthy password preventing the API call to fire.
+For testing locally, the program will run a MockGPIO library. This reads `simulated_pins.json` where you can trigger
+the PIN input which monitors the burglar alarm system. `SYSTEM_ARMED_PIN` is PIN 16 and `SYSTEM_ALARM_PIN` is PIN 20.
+
+You will need to be on the 192.168.0.x subnet in order to reach the cameras since they are /32 for their subnet.
