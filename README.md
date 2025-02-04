@@ -21,14 +21,18 @@ user's home directory and with a subfolder of `security-camera-privacy-mask`
 1. `git clone git@bitbucket.org:mount7freiburg/security-camera-privacy-mask.git`
 2. `cd security-camera-privacy-mask`
 3. `python -m venv .venv`
-4. `.venv/bin/pip install -r requirements.txt`
-5. `cp .env.example .env`
-6. `cp cameras.json.example cameras.json`
-7. Make appropriate changes to `.env` file
-8. Make appropriate changes to `cameras.json` file
-9. Connect wires to GPIO 16 and GPIO 20 for the Raspberry Pi
-10. Configure `crontab` to run `deploy.sh` (optional)
+4. `source .venv/bin/activate`
+5. `.venv/bin/pip install -r requirements.txt`
+6. `cp .env.example .env`
+7. `cp cameras.json.example cameras.json`
+8. Make appropriate changes to `.env` file
+9. Make appropriate changes to `cameras.json` file
+10. Connect wires to GPIO 16 and GPIO 20 for the Raspberry Pi
+11. Configure `crontab` to run `deploy.sh` (optional)
     1. This will perform a `git pull` and restart the service
+
+> [!NOTE]
+> When done with the virtual environment you can type `deactivate` in the terminal.
 
 ## Service Setup
 
