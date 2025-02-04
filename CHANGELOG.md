@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] 
+## [Unreleased]
+
+## [1.1.0] 2025-02-04
 
 ### Added
 - Introduced `MockGPIO` for local testing, which simulates GPIO pins using `simulated_pins.json`.
@@ -13,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - PIN `16` for `SYSTEM_ARMED_PIN`.
   - PIN `20` for `SYSTEM_ALARM_PIN`.
 - Updated `README.md` with information about using the mock GPIO library and testing on a specific subnet.
+- Added scheduling functionality to .env file
+  - `USE_SCHEDULE` boolean to the .env file
+  - `..DAY_HOURS` added to .env file for scheduling
 
 ### Changed
 - Simplified language conversion by replacing `distutils.util.strtobool` with a custom `to_bool` function.
@@ -44,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Ensured compatibility with localized file paths and user roles in a Raspberry Pi environment.
 
+[Unreleased]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/master%0D1.1.0#diff
 
-[Unreleased]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/master%0D1.0.0#diff
+[1.1.0]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/1.0.0%0D1.1.0#diff
 [1.0.0]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/src/1.0.0/

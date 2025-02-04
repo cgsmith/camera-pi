@@ -4,7 +4,7 @@ import os
 import smtplib
 import ssl
 import time
-from datetime import datetime
+from datetime import datetime, time as dtime
 import gettext
 import requests
 from dotenv import load_dotenv
@@ -16,6 +16,7 @@ try:
 except (ImportError, RuntimeError):
     # Path to the file simulating GPIO pin states
     PIN_STATES_FILE = "simulated_pins.json"
+
 
     class MockGPIO:
         BCM = "BCM"
@@ -50,6 +51,7 @@ except (ImportError, RuntimeError):
 
     GPIO = MockGPIO()
 
+
 # Custom implementation to replace `distutils.util.strtobool`
 def to_bool(value):
     value = value.lower()
@@ -76,8 +78,7 @@ interior_cameras = [camera['ip'] for camera in camera_data if camera['type'] == 
 exterior_cameras = [camera['ip'] for camera in camera_data if camera['type'] == 'exterior']
 all_cameras = [camera['ip'] for camera in camera_data]
 
-
-el = gettext.translation('base', localedir=os.path.join(USER_HOME,'locales'), languages=[os.environ['LANGUAGE']])
+el = gettext.translation('base', localedir=os.path.join(USER_HOME, 'locales'), languages=[os.environ['LANGUAGE']])
 el.install()
 _ = el.gettext
 
@@ -111,6 +112,47 @@ def privacy_api_calls(camera_ips=None, status=False):
                 logger.error(f"Request to {ip} returned status code {response.status_code}.")
 
 
+def parse_business_hours(hours_str):
+    """Parses business hours from a string like '7:00-18:30' into time objects."""
+    if not hours_str:  # Handle closed days
+        return None
+
+    try:
+        start_str, end_str = hours_str.split('-')
+        start_hour, start_minute = map(int, start_str.split(':'))
+        end_hour, end_minute = map(int, end_str.split(':'))
+        return dtime(start_hour, start_minute), dtime(end_hour, end_minute)
+    except ValueError:
+        logger.error(f"Invalid business hours format: {hours_str}")
+        return None
+
+
+def is_within_business_hours():
+    now = datetime.now()
+    day_of_week = now.weekday()  # Monday is 0, Sunday is 6
+    current_time = now.time()
+
+    business_hours = {
+        0: os.getenv('MONDAY_HOURS'),
+        1: os.getenv('TUESDAY_HOURS'),
+        2: os.getenv('WEDNESDAY_HOURS'),
+        3: os.getenv('THURSDAY_HOURS'),
+        4: os.getenv('FRIDAY_HOURS'),
+        5: os.getenv('SATURDAY_HOURS'),
+        6: os.getenv('SUNDAY_HOURS'),
+    }
+
+    if day_of_week in business_hours:
+        hours_str = business_hours[day_of_week]
+        hours = parse_business_hours(hours_str)
+        if hours is None:  # Closed or invalid format
+            return False
+
+        start, end = hours
+        return start <= current_time <= end
+    return False
+
+
 def send_email(subject, body):
     if to_bool(os.getenv('EMAIL_ENABLE', 'False')):
         context = ssl.create_default_context()
@@ -124,7 +166,22 @@ def log_current_state():
     logger.info(_('System Alarm: ') + str(last_alarm_state))
 
 
-def update_privacy_masks():
+def update_privacy_masks(schedule_override=False):
+    if schedule_override:
+        if is_within_business_hours():
+            print("All privacy masks on (Schedule)")
+            log_current_state()
+            logger.info('All privacy masks on (Schedule)')
+            send_email(subject=_('All privacy masks on (Schedule)'), body=_('Privacy change'))
+            privacy_api_calls(camera_ips=all_cameras, status=True)
+        else:
+            print("Interior privacy masks off (Schedule)")
+            log_current_state()
+            logger.info('Interior privacy masks off (Schedule)')
+            send_email(subject=_('Interior privacy masks off (Schedule)'), body=_('Privacy change'))
+            privacy_api_calls(camera_ips=interior_cameras)
+        return  # Exit early since schedule is in use
+
     if last_armed_state and not last_alarm_state:
         print("Interior privacy masks off")
         log_current_state()
@@ -150,6 +207,8 @@ def update_privacy_masks():
 """
 send_email(_('Controller booted'), datetime.now().strftime('%c') + _(': Powered on'))
 
+# Check for environment variable to enable schedule override
+USE_SCHEDULE = to_bool(os.getenv('USE_SCHEDULE', 'False'))
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SYSTEM_ARMED_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(SYSTEM_ALARM_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -160,20 +219,24 @@ last_armed_state = GPIO.input(SYSTEM_ARMED_PIN)
 last_alarm_state = GPIO.input(SYSTEM_ALARM_PIN)
 
 # send an initial email and set the initial state for privacy masks
-update_privacy_masks()
+update_privacy_masks(schedule_override=USE_SCHEDULE)
 
 try:
     while True:
         time.sleep(1)
-        current_armed_stated = GPIO.input(SYSTEM_ARMED_PIN)
-        current_alarm_stated = GPIO.input(SYSTEM_ALARM_PIN)
+        if USE_SCHEDULE:
+            update_privacy_masks(schedule_override=True)  # Use schedule logic
+            time.sleep(60)  # sleep longer if schedule override
+        else:
+            current_armed_stated = GPIO.input(SYSTEM_ARMED_PIN)
+            current_alarm_stated = GPIO.input(SYSTEM_ALARM_PIN)
 
-        if current_armed_stated != last_armed_state:
-            last_armed_state = current_armed_stated
-            update_privacy_masks()
-        if current_alarm_stated != last_alarm_state:
-            last_alarm_state = current_alarm_stated
-            update_privacy_masks()
+            if current_armed_stated != last_armed_state:
+                last_armed_state = current_armed_stated
+                update_privacy_masks()
+            if current_alarm_stated != last_alarm_state:
+                last_alarm_state = current_alarm_stated
+                update_privacy_masks()
 
 except KeyboardInterrupt:
     GPIO.cleanup()
