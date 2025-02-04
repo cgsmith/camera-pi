@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Ensured compatibility with localized file paths and user roles in a Raspberry Pi environment.
 
-[Unreleased]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/master%0D1.1.0#diff
+[Unreleased]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/1.1.0%0Dmaster#diff
 
-[1.1.0]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/1.0.0%0D1.1.0#diff
+[1.1.0]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/branches/compare/1.1.0%0D1.0.0#diff
 [1.0.0]: https://bitbucket.org/mount7freiburg/security-camera-privacy-mask/src/1.0.0/
